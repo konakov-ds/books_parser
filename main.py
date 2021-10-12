@@ -13,13 +13,17 @@ def get_url_for_book(book_id):
     return f'https://tululu.org/txt.php?id={book_id}'
 
 
-def get_book_title(book_id):
+def get_book_soup(book_id):
     book_url = f'https://tululu.org/b{book_id}/'
     response = requests.get(book_url)
     if not check_for_redirect(response):
-        soup = BeautifulSoup(response.text, 'lxml')
-        title = soup.find('div', id='content').find('h1').text.split('::')
-        return f'{book_id}.{title[0].strip()}'
+        return BeautifulSoup(response.text, 'lxml')
+
+
+def get_book_title(book_id):
+    soup = get_book_soup(book_id)
+    title = soup.find('div', id='content').find('h1').text.split('::')
+    return f'{book_id}.{title[0].strip()}'
 
 
 def download_txt(url, filename, folder='books/'):
@@ -40,6 +44,6 @@ def load_books(books_count=10):
             download_txt(url, filename)
         except requests.HTTPError:
             continue
-
+    print('Books download successfully!')
 
 load_books()
