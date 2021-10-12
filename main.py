@@ -30,7 +30,7 @@ def get_book_title(book_id):
 def get_book_img(book_id):
     soup = get_book_soup(book_id)
     img_src = soup.find('div', class_='bookimage').find('img')['src']
-    return urljoin('https://tululu.org/', img_src)
+    return urljoin('https://tululu.org/', img_src), img_src
 
 
 def download_txt(url, filename, folder='books/'):
@@ -43,6 +43,17 @@ def download_txt(url, filename, folder='books/'):
             f.write(response.text)
 
 
+def download_image(book_id, folder='images/'):
+    url, img_src = get_book_img(book_id)
+    img_name = img_src.split('/')[2]
+    img_path = os.path.join(folder, img_name)
+    os.makedirs(folder, exist_ok=True)
+    response = requests.get(url, verify=True)
+    if not check_for_redirect(response):
+        with open(img_path, 'wb') as f:
+            f.write(response.content)
+
+
 def load_books(books_count=10):
     for i in range(1, books_count + 1):
         url = get_url_for_book(i)
@@ -53,5 +64,7 @@ def load_books(books_count=10):
             continue
     print('Books download successfully!')
 
+
 #load_books()
-print(get_book_img(1))
+#print(get_book_img(5))
+download_image(5)
