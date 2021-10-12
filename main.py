@@ -2,6 +2,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
+from urllib.parse import urljoin
 
 
 def check_for_redirect(response):
@@ -26,6 +27,12 @@ def get_book_title(book_id):
     return f'{book_id}.{title[0].strip()}'
 
 
+def get_book_img(book_id):
+    soup = get_book_soup(book_id)
+    img_src = soup.find('div', class_='bookimage').find('img')['src']
+    return urljoin('https://tululu.org/', img_src)
+
+
 def download_txt(url, filename, folder='books/'):
     valid_filename = f'{sanitize_filename(filename)}.txt'
     book_path = os.path.join(folder, valid_filename)
@@ -46,4 +53,5 @@ def load_books(books_count=10):
             continue
     print('Books download successfully!')
 
-load_books()
+#load_books()
+print(get_book_img(1))
