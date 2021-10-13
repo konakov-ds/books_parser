@@ -27,6 +27,13 @@ def get_book_title(book_id):
     return f'{book_id}.{title[0].strip()}'
 
 
+def get_book_genre(book_id):
+    soup = get_book_soup(book_id)
+    genre_list = soup.find('span', class_='d_book').find_all('a')
+    genre = [genre.text for genre in genre_list]
+    return genre
+
+
 def get_book_comments(book_id):
     soup = get_book_soup(book_id)
     comments_list = soup.find_all('div', class_='texts')
@@ -96,4 +103,4 @@ def load_comments(books_count=10):
 #load_images()
 #download_image(5)
 
-load_comments()
+print(get_book_genre(5))
