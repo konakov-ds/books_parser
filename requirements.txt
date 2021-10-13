@@ -1,0 +1,4 @@
+requests==2.26.*
+bs4==0.0.1
+installed lxml==4.6.*
+pathvalidate==2.5.*
