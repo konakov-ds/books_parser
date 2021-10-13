@@ -27,6 +27,13 @@ def get_book_title(book_id):
     return f'{book_id}.{title[0].strip()}'
 
 
+def get_book_comments(book_id):
+    soup = get_book_soup(book_id)
+    comments_list = soup.find_all('div', class_='texts')
+    comments = [comment.find('span').text for comment in comments_list]
+    return comments
+
+
 def get_book_img(book_id):
     soup = get_book_soup(book_id)
     img_src = soup.find('div', class_='bookimage').find('img')['src']
@@ -54,6 +61,15 @@ def download_image(book_id, folder='images/'):
             f.write(response.content)
 
 
+def load_images(books_count=10):
+    for i in range(1, books_count + 1):
+        try:
+            download_image(i)
+        except requests.HTTPError:
+            continue
+    print('Books images download successfully!')
+
+
 def load_books(books_count=10):
     for i in range(1, books_count + 1):
         url = get_url_for_book(i)
@@ -65,6 +81,19 @@ def load_books(books_count=10):
     print('Books download successfully!')
 
 
-#load_books()
-#print(get_book_img(5))
-download_image(5)
+def load_comments(books_count=10):
+    for i in range(1, books_count + 1):
+        try:
+            title = get_book_title(i)
+            comments = get_book_comments(i)
+            print(f'{title}')
+            print('\n'.join(comments), end='\n\n')
+        except requests.HTTPError:
+            continue
+
+
+
+#load_images()
+#download_image(5)
+
+load_comments()
