@@ -10,41 +10,11 @@ def check_for_redirect(response):
         raise requests.HTTPError
 
 
-def get_url_for_book(book_id):
-    return f'https://tululu.org/txt.php?id={book_id}'
-
-
 def get_book_soup(book_id):
     book_url = f'https://tululu.org/b{book_id}/'
     response = requests.get(book_url)
     if not check_for_redirect(response):
         return BeautifulSoup(response.text, 'lxml')
-
-
-def get_book_title(book_id):
-    soup = get_book_soup(book_id)
-    title = soup.find('div', id='content').find('h1').text.split('::')
-    return f'{book_id}.{title[0].strip()}'
-
-
-def get_book_genre(book_id):
-    soup = get_book_soup(book_id)
-    genre_list = soup.find('span', class_='d_book').find_all('a')
-    genre = [genre.text for genre in genre_list]
-    return genre
-
-
-def get_book_comments(book_id):
-    soup = get_book_soup(book_id)
-    comments_list = soup.find_all('div', class_='texts')
-    comments = [comment.find('span').text for comment in comments_list]
-    return comments
-
-
-def get_book_img(book_id):
-    soup = get_book_soup(book_id)
-    img_src = soup.find('div', class_='bookimage').find('img')['src']
-    return urljoin('https://tululu.org/', img_src), img_src
 
 
 def download_txt(url, filename, folder='books/'):
@@ -99,8 +69,31 @@ def load_comments(books_count=10):
             continue
 
 
+def parse_book_page(book_id):
+
+    soup = get_book_soup(book_id)
+
+    head = soup.find('div', id='content').find('h1').text.split('::')
+    title = head[0].strip()
+    author = head[1].strip()
+    genre_find = soup.find('span', class_='d_book').find_all('a')
+    genre = ', '.join([genre.text for genre in genre_find])
+    img_src = soup.find('div', class_='bookimage').find('img')['src']
+    img_url = urljoin('https://tululu.org/', img_src)
+    text_url = f'https://tululu.org/txt.php?id={book_id}'
+
+    book_info = {
+        'title': title,
+        'author': author,
+        'genres': genre,
+        'img_url': img_url,
+        'text_url': text_url
+    }
+
+    return book_info
+
 
 #load_images()
 #download_image(5)
 
-print(get_book_genre(5))
+print(parse_book_page(1))
