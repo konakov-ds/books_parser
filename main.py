@@ -52,7 +52,7 @@ def parse_book_page(book_id):
 
     img_src = soup.find('div', class_='bookimage').find('img')['src']
     img_url = urljoin('https://tululu.org/', img_src)
-    text_url = f'https://tululu.org/txt.php?id={book_id}'
+    #text_url = f'https://tululu.org/txt.php?id={book_id}'
 
     book_info = {
         'title': title,
@@ -61,7 +61,7 @@ def parse_book_page(book_id):
         'comments': comments,
         'img_src': img_src,
         'img_url': img_url,
-        'text_url': text_url
+        'book_id': book_id
     }
 
     return book_info
