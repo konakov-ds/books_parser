@@ -43,8 +43,8 @@ def parse_book_page(book_id):
     soup = get_book_soup(book_id)
 
     head = soup.find('div', id='content').find('h1').text.split('::')
-    title = head[0].strip()
-    author = head[1].strip()
+    head = [h.strip() for h in head]
+    title, author = head
     genre_find = soup.find('span', class_='d_book').find_all('a')
     genre = ', '.join([genre.text for genre in genre_find])
     comments_find = soup.find_all('div', class_='texts')
