@@ -80,14 +80,15 @@ def books_downloads(start_id, end_id):
         try:
             book_info = parse_book_page(book_id)
             guid = book_info['guid']
-            if book_info['img_src'] == 'nopic.gif':
-                guid = ''
 
             download_txt(
                 book_info['book_id'],
                 book_info['title'],
                 guid=guid
             )
+
+            if book_info['img_src'] == 'nopic.gif':
+                guid = ''
 
             download_image(
                 book_info['img_url'],
