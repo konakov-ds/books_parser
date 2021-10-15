@@ -20,19 +20,21 @@ def get_book_soup(book_id):
         return BeautifulSoup(response.text, 'lxml')
 
 
-def download_txt(url, filename, folder='books/'):
+def download_txt(book_id, filename, guid, folder='books/'):
+    url = 'https://tululu.org/txt.php'
+    params = {'id': book_id}
     os.makedirs(folder, exist_ok=True)
-    valid_filename = f'{sanitize_filename(filename)}_{uuid.uuid4().hex}.txt'
+    valid_filename = f'{sanitize_filename(filename)}_{guid}.txt'
     book_path = os.path.join(folder, valid_filename)
-    response = requests.get(url, verify=True)
+    response = requests.get(url, params=params, verify=True)
     if not check_for_redirect(response):
         with open(book_path, 'w') as f:
             f.write(response.text)
 
 
-def download_image(url, src, folder='images/'):
+def download_image(url, src, guid, folder='images/'):
     os.makedirs(folder, exist_ok=True)
-    img_path = os.path.join(folder, f'{src}_{uuid.uuid4().hex}')
+    img_path = os.path.join(folder, f'{guid}_{src}')
     response = requests.get(url, verify=True)
     if not check_for_redirect(response):
         with open(img_path, 'wb') as f:
@@ -40,7 +42,6 @@ def download_image(url, src, folder='images/'):
 
 
 def parse_book_page(book_id):
-
     soup = get_book_soup(book_id)
 
     head = soup.find('div', id='content').find('h1').text.split('::')
@@ -51,9 +52,8 @@ def parse_book_page(book_id):
     comments_find = soup.find_all('div', class_='texts')
     comments = [comment.find('span').text for comment in comments_find]
 
-    img_src = soup.find('div', class_='bookimage').find('img')['src']
+    img_src = soup.find('div', class_='bookimage').find('img')['src'].split('/')[2]
     img_url = urljoin('https://tululu.org/', img_src)
-    #text_url = f'https://tululu.org/txt.php?id={book_id}'
 
     book_info = {
         'title': title,
@@ -72,9 +72,21 @@ def books_downloads(start_id, end_id):
     for book_id in range(start_id, end_id + 1):
         try:
             book_info = parse_book_page(book_id)
-            print(f'Название: {book_info["title"]}')
-            print(f'Автор: {book_info["author"]}')
-            print(f'Жанр: {book_info["genres"]}', end='\n\n')
+            guid = uuid.uuid4().hex
+
+            download_txt(
+                book_info['book_id'],
+                book_info['title'],
+                guid=guid
+            )
+            if book_info['img_src'] == 'nopic.gif':
+                guid = ''
+            download_image(
+                book_info['img_url'],
+                book_info['img_src'],
+                guid=guid
+            )
+            print(f'Book {book_info["title"]} download successfully!')
         except requests.HTTPError:
             continue
 
