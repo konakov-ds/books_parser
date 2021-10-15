@@ -80,8 +80,8 @@ def books_downloads(start_id, end_id):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--start_id', default=1)
-    parser.add_argument('--end_id', default=10)
+    parser.add_argument('--start_id', type=int, default=1)
+    parser.add_argument('--end_id', type=int, default=10)
     args = parser.parse_args()
 
-    books_downloads(int(args.start_id), int(args.end_id))
+    books_downloads(args.start_id, args.end_id)
