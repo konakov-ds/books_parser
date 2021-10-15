@@ -1,5 +1,6 @@
 import argparse
 import os
+import uuid
 from urllib.parse import urljoin
 
 import requests
@@ -21,7 +22,7 @@ def get_book_soup(book_id):
 
 def download_txt(url, filename, folder='books/'):
     os.makedirs(folder, exist_ok=True)
-    valid_filename = f'{sanitize_filename(filename)}.txt'
+    valid_filename = f'{sanitize_filename(filename)}_{uuid.uuid4().hex}.txt'
     book_path = os.path.join(folder, valid_filename)
     response = requests.get(url, verify=True)
     if not check_for_redirect(response):
@@ -31,7 +32,7 @@ def download_txt(url, filename, folder='books/'):
 
 def download_image(url, src, folder='images/'):
     os.makedirs(folder, exist_ok=True)
-    img_path = os.path.join(folder, src)
+    img_path = os.path.join(folder, f'{src}_{uuid.uuid4().hex}')
     response = requests.get(url, verify=True)
     if not check_for_redirect(response):
         with open(img_path, 'wb') as f:
