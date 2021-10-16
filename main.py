@@ -7,6 +7,8 @@ import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 
+base_url = "https://tululu.org/images/"
+
 
 def check_for_redirect(response):
     if response.history:
@@ -36,7 +38,7 @@ def download_txt(book_id, filename, guid, folder='books/'):
 
 def download_image(url, src, guid, folder='images/'):
     os.makedirs(folder, exist_ok=True)
-    img_path = os.path.join(folder, f'{guid}_{src}')
+    img_path = urljoin(folder, f'{guid}_{src.split("/")[2]}')
     response = requests.get(url, verify=True)
     response.raise_for_status()
     check_for_redirect(response)
@@ -48,19 +50,14 @@ def parse_book_page(book_id):
     soup = get_book_soup(book_id)
 
     head = soup.find('div', id='content').find('h1').text.split('::')
-    head = [h.strip() for h in head]
-    title, author = head
-    genre_find = soup.find('span', class_='d_book').find_all('a')
-    genre = ', '.join([genre.text for genre in genre_find])
-    comments_find = soup.find_all('div', class_='texts')
-    comments = [comment.find('span').text for comment in comments_find]
-    img_src = soup.find('div', class_='bookimage').find('img')['src'].split('/')[2]
+    title, author = [h.strip() for h in head]
+    genre = soup.find('span', class_='d_book').find_all('a')
+    genre = ', '.join([genre.text for genre in genre])
+    comments = soup.find_all('div', class_='texts')
+    comments = [comment.find('span').text for comment in comments]
     guid = uuid.uuid4().hex
-    if img_src == 'nopic.gif':
-        img_url = urljoin('https://tululu.org/images/', img_src)
-    else:
-        img_url = urljoin('https://tululu.org/shots/', img_src)
-
+    img_src = soup.find('div', class_='bookimage').find('img')['src']
+    img_url = urljoin(base_url, img_src)
     book_info = {
         'title': title,
         'author': author,
@@ -87,7 +84,7 @@ def books_downloads(start_id, end_id):
                 guid=guid
             )
 
-            if book_info['img_src'] == 'nopic.gif':
+            if 'nopic.gif' in book_info['img_src']:
                 guid = ''
 
             download_image(
