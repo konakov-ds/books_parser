@@ -72,8 +72,8 @@ def parse_book_page(book_id):
     return book_info
 
 
-def books_downloads(start_id, end_id):
-    for book_id in range(start_id, end_id + 1):
+def books_downloads(books_ids):
+    for book_id in books_ids:
         try:
             book_info = parse_book_page(book_id)
             guid = book_info['guid']

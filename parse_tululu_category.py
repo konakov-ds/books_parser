@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
-from main import check_for_redirect
+from main import check_for_redirect, books_downloads
 
 base_url = "https://tululu.org/l55/"
 
@@ -18,7 +18,7 @@ def get_page_soup(url):
     return BeautifulSoup(response.text, 'lxml')
 
 
-def get_book_links(base_url, num_pages=3):
+def get_books_ids(base_url, num_pages=3):
     book_links = []
     for page in range(num_pages):
         page_url = urljoin(base_url, str(page))
@@ -28,11 +28,10 @@ def get_book_links(base_url, num_pages=3):
         books = soup.find_all('table', class_='d_book')
         for book in books:
             href = book.find('a', href=True)['href']
-            link = urljoin(base_url, href)
-            book_links.append(link)
+            book_links.append(href[2:-1])
     return book_links
 
 
 if __name__ == '__main__':
-    response = get_book_links(base_url)
-    print(len(response))
+    books_ids = get_books_ids(base_url)
+    books_downloads(books_ids)
