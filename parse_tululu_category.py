@@ -18,17 +18,21 @@ def get_page_soup(url):
     return BeautifulSoup(response.text, 'lxml')
 
 
-def get_book_links(base_url):
-    soup = get_page_soup(base_url)
-    books = soup.find_all('table', class_='d_book')
+def get_book_links(base_url, num_pages=3):
     book_links = []
-    for book in books:
-        href = book.find('a', href=True)['href']
-        link = urljoin(base_url, href)
-        book_links.append(link)
+    for page in range(num_pages):
+        page_url = urljoin(base_url, str(page))
+        if not page:
+            page_url = base_url
+        soup = get_page_soup(page_url)
+        books = soup.find_all('table', class_='d_book')
+        for book in books:
+            href = book.find('a', href=True)['href']
+            link = urljoin(base_url, href)
+            book_links.append(link)
     return book_links
 
 
 if __name__ == '__main__':
     response = get_book_links(base_url)
-    print(response)
+    print(len(response))
