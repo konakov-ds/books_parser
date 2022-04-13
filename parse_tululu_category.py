@@ -1,11 +1,8 @@
 import argparse
-import os
-import uuid
 from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
-from pathvalidate import sanitize_filename
 from main import check_for_redirect, books_downloads
 
 base_url = "https://tululu.org/l55/"
@@ -18,10 +15,19 @@ def get_page_soup(url):
     return BeautifulSoup(response.text, 'lxml')
 
 
-def get_books_ids(base_url, num_pages=4):
+def get_num_pages(url):
+    soup = get_page_soup(url)
+    selector = '.npage'
+    pages = [int(p['href'][5:-1]) for p in soup.select(selector)]
+    return max(pages)
+
+
+def get_books_ids(base_url, start_page=1, end_page=None):
     selector = '.d_book [href*="/b"]'
+    if not end_page:
+        end_page = get_num_pages(base_url)
     books_ids = []
-    for page in range(1, num_pages + 1):
+    for page in range(start_page, end_page):
         page_url = urljoin(base_url, str(page))
         soup = get_page_soup(page_url)
         page_books_ids = [
@@ -32,5 +38,9 @@ def get_books_ids(base_url, num_pages=4):
 
 
 if __name__ == '__main__':
-    books_ids = get_books_ids(base_url)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--start_page', type=int, default=1)
+    parser.add_argument('--end_page', type=int)
+    args = parser.parse_args()
+    books_ids = get_books_ids(base_url, args.start_page, args.end_page)
     books_downloads(books_ids)
