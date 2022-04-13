@@ -134,4 +134,4 @@ if __name__ == '__main__':
     parser.add_argument('--end_id', type=int, default=10)
     args = parser.parse_args()
 
-    books_downloads(args.start_id, args.end_id)
+    books_downloads(range(args.start_id, args.end_id))
