@@ -39,8 +39,20 @@ def get_books_ids(base_url, start_page=1, end_page=None):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+
     parser.add_argument('--start_page', type=int, default=1)
     parser.add_argument('--end_page', type=int)
+    parser.add_argument('--dest_folder')
+    parser.add_argument('--json_path')
+    parser.add_argument('--skip_img', type=bool)
+    parser.add_argument('--skip_txt', type=bool)
+
     args = parser.parse_args()
     books_ids = get_books_ids(base_url, args.start_page, args.end_page)
-    books_downloads(books_ids)
+    books_downloads(
+        books_ids,
+        dest_folder=args.dest_folder,
+        json_path=args.json_path,
+        skip_img=args.skip_img,
+        skip_txt=args.skip_txt
+    )

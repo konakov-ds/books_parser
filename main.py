@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 import uuid
 from urllib.parse import urljoin
@@ -23,7 +24,9 @@ def get_book_soup(book_id):
     return BeautifulSoup(response.text, 'lxml')
 
 
-def download_txt(book_id, filename, guid, folder='books/'):
+def download_txt(book_id, filename, guid, folder='books/', dest_folder=None):
+    if dest_folder:
+        folder = f'{dest_folder}/{folder}'
     url = 'https://tululu.org/txt.php'
     params = {'id': book_id}
     os.makedirs(folder, exist_ok=True)
@@ -36,7 +39,9 @@ def download_txt(book_id, filename, guid, folder='books/'):
         f.write(response.text)
 
 
-def download_image(url, src, guid, folder='images/'):
+def download_image(url, src, guid,  folder='images/', dest_folder=None):
+    if dest_folder:
+        folder = f'{dest_folder}/{folder}'
     os.makedirs(folder, exist_ok=True)
     img_path = urljoin(folder, f'{guid}_{src.split("/")[2]}')
     response = requests.get(url, verify=True)
@@ -72,30 +77,55 @@ def parse_book_page(book_id):
     return book_info
 
 
-def books_downloads(books_ids):
+def books_downloads(
+        books_ids,
+        dest_folder='parse_results/',
+        json_path=None,
+        skip_txt=False,
+        skip_img=False
+):
+    if dest_folder:
+        os.makedirs(dest_folder, exist_ok=True)
+    books_info = []
     for book_id in books_ids:
         try:
             book_info = parse_book_page(book_id)
+            books_info.append(book_info)
             guid = book_info['guid']
-
-            download_txt(
-                book_info['book_id'],
-                book_info['title'],
-                guid=guid
-            )
-
+            if not skip_txt:
+                download_txt(
+                    book_info['book_id'],
+                    book_info['title'],
+                    guid=guid,
+                    dest_folder=dest_folder
+                )
+                print(f'Book {book_info["book_id"]} download successfully!')
             if 'nopic.gif' in book_info['img_src']:
                 guid = ''
+            if not skip_img:
+                download_image(
+                    book_info['img_url'],
+                    book_info['img_src'],
+                    guid=guid,
+                    dest_folder=dest_folder
+                )
+                print(f'Img book {book_info["book_id"]} download successfully!')
 
-            download_image(
-                book_info['img_url'],
-                book_info['img_src'],
-                guid=guid
-            )
-
-            print(f'Book {book_info["title"]} download successfully!')
         except requests.HTTPError:
             continue
+
+    if dest_folder and json_path:
+        json_path = f'{dest_folder}/{json_path}'
+        os.makedirs(json_path, exist_ok=True)
+    elif dest_folder:
+        json_path = dest_folder
+    elif json_path:
+        os.makedirs(json_path, exist_ok=True)
+    else:
+        json_path = ''
+
+    with open(f'{json_path}/books_info.json', 'w', encoding='utf8') as f:
+        json.dump(books_info, f, ensure_ascii=False)
 
 
 if __name__ == '__main__':
