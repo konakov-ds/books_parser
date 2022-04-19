@@ -3,7 +3,8 @@ from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
-from main import check_for_redirect, books_downloads
+from parsing_utils import check_for_redirect
+from parse_tululu_books_by_id import books_downloads
 
 base_url = "https://tululu.org/l55/"
 
