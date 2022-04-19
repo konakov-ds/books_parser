@@ -4,11 +4,11 @@
 Программа позволяет скачивать текст книги, а также получить дополнительную
 информацию (обложку, жанр, комментарии).
 Используется ресурс [tululu.org](https://tululu.org/).
-Для скачивания книг из определенного диапазона id используйте `main.py`, для скачивания книг из категории фантастика - `parse_tululu_category.py`
+Для скачивания книг из определенного диапазона id используйте `parse_tululu_books_by_id`, для скачивания книг из категории фантастика - `parse_tululu_category.py`
 
 
 ###  Переменные окружения
-`main.py`
+`parse_tululu_books_by_id`
 - start_id, end_id : диапазон id книг для скачивания.  По умолчанию
 start_id = 1, end_id = 10
   
@@ -32,7 +32,7 @@ start_id = 1, end_id = 10
 - Запустить скрипт можно командой:
   
   ```
-  python main.py --start_id START --end_id END --OTHERS
+  python parse_tululu_books_by_id.py --start_id START --end_id END --OTHERS
   ```
   ```
   python parse_tululu_category.py --start_page START --end_page END --OTHERS
