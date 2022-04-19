@@ -18,15 +18,12 @@ def get_page_soup(url):
 
 def get_num_pages(url):
     soup = get_page_soup(url)
-    selector = '.npage'
-    pages = [int(p['href'][5:-1]) for p in soup.select(selector)]
-    return max(pages)
+    selector = '.npage:last-child'
+    return int(soup.select_one(selector).text)
 
 
-def get_books_ids(base_url, start_page=1, end_page=None):
+def get_books_ids(base_url, start_page=1, end_page=get_num_pages(base_url)):
     selector = '.d_book [href*="/b"]'
-    if not end_page:
-        end_page = get_num_pages(base_url)
     books_ids = []
     for page in range(start_page, end_page):
         page_url = urljoin(base_url, str(page))
