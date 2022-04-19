@@ -22,15 +22,19 @@ def get_book_soup(book_id):
 
 def parse_book_page(book_id):
     soup = get_book_soup(book_id)
-
-    head = soup.find('div', id='content').find('h1').text.split('::')
+    h1_selector = '#content h1'
+    head = soup.select_one(h1_selector).text.split('::')
     title, author = [h.strip() for h in head]
-    genre = soup.find('span', class_='d_book').find_all('a')
+    book_selector = 'span.d_book a'
+    genre = soup.select(book_selector)
     genre = ', '.join([genre.text for genre in genre])
-    comments = soup.find_all('div', class_='texts')
-    comments = [comment.find('span').text for comment in comments]
+
+    comment_selector = '.texts span'
+    comments = soup.select(comment_selector)
+    comments = [comment.text for comment in comments]
     guid = uuid.uuid4().hex
-    img_src = soup.find('div', class_='bookimage').find('img')['src']
+    img_selector = '.bookimage [src]'
+    img_src = soup.select_one(img_selector)['src']
     img_url = urljoin(base_url, img_src)
     book_info = {
         'title': title,
