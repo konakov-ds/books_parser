@@ -42,8 +42,8 @@ if __name__ == '__main__':
     parser.add_argument('--end_page', type=int)
     parser.add_argument('--dest_folder')
     parser.add_argument('--json_path')
-    parser.add_argument('--skip_img', type=bool)
-    parser.add_argument('--skip_txt', type=bool)
+    parser.add_argument('--skip_img', action='store_true')
+    parser.add_argument('--skip_txt', action='store_true')
 
     args = parser.parse_args()
     books_ids = get_books_ids(base_url, args.start_page, args.end_page)
