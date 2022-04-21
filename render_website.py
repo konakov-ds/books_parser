@@ -11,27 +11,41 @@ BOOKS_DIR = './dest/'
 
 
 def process_book_info(books_info='books_info.json'):
-    with open(urljoin(BOOKS_DIR, books_info)) as f:
-        books = json.load(f)
+    images = os.listdir(urljoin(BOOKS_DIR, 'images/'))
+    books = os.listdir(urljoin(BOOKS_DIR, 'books/'))
 
-    books_images_src = [
-        book[:book.find('_')] for book in os.listdir(urljoin(BOOKS_DIR, 'images/'))
+    with open(urljoin(BOOKS_DIR, books_info)) as f:
+        books_info = json.load(f)
+
+    books_images_paths = [
+        book[:book.find('_')] for book in images
     ]
-    for book in books:
-        src_index = None
+    books_paths = [
+        book[book.find('_') + 1: -4] for book in books
+    ]
+    print(books_paths)
+    for book in books_info:
+        img_path_index = None
         guid = book['guid']
-        if guid in books_images_src:
-            src_index = books_images_src.index(guid)
+        book['book_path'] = ''
+        if guid in books_paths:
+            book_path_index = books_paths.index(guid)
+            book['book_path'] = urljoin(
+                    urljoin(BOOKS_DIR, 'books/'),
+                    books[book_path_index]
+                )
+        if guid in books_images_paths:
+            img_path_index = books_images_paths.index(guid)
         book['img_src'] = urljoin(
             urljoin(BOOKS_DIR, 'images/'),
             '_nopic.gif'
         )
-        if src_index:
+        if img_path_index:
             book['img_src'] = urljoin(
                 urljoin(BOOKS_DIR, 'images/'),
-                os.listdir(urljoin(BOOKS_DIR, 'images/'))[src_index]
+                images[img_path_index]
             )
-    return books
+    return books_info
 
 
 def render():
