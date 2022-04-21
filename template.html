@@ -11,6 +11,38 @@
     <title>Hello, world!</title>
   </head>
   <body>
+      <nav class="mx-auto" aria-label="Page navigation">
+        <ul class="pagination justify-content-center my-3">
+          {% if page > 1 %}
+            <li class="page-item">
+            <a class="page-link" href="index{{ page-1 }}.html">Предыдущая</a>
+          </li>
+          {% else %}
+            <li class="page-item disabled">
+            <span class="page-link">Предыдущая</span>
+          </li>
+          {% endif %}
+          {% for n_page in range(num_pages) %}
+          {% if n_page+1 == page %}
+          <li class="page-item active" aria-current="page">
+            <a class="page-link" href="#">{{ n_page+1 }}<span class="sr-only">(current)</span></a>
+          </li>
+          {% else %}
+          <li class="page-item"><a class="page-link" href="index{{ n_page+1 }}.html">{{ n_page+1 }}</a>
+          </li>
+          {% endif %}
+        {% endfor %}
+          {% if num_pages > page %}
+          <li class="page-item">
+            <a class="page-link" href="index{{ page+1 }}.html">Следующая</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Следующая</span>
+          </li>
+        {% endif %}
+        </ul>
+      </nav>
   {% for row in rows %}
   <div class="container">
     <div class="row">
