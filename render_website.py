@@ -5,6 +5,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
+from more_itertools import chunked
 
 BOOKS_DIR = './dest/'
 
@@ -35,6 +36,7 @@ def process_book_info(books_info='books_info.json'):
 
 def render():
     books_info = process_book_info()
+    rows = chunked(books_info, 2)
 
     env = Environment(
         loader=FileSystemLoader('.'),
@@ -43,7 +45,7 @@ def render():
 
     template = env.get_template('template.html')
 
-    rendered_page = template.render(books_info=books_info)
+    rendered_page = template.render(rows=rows)
 
     with open('index.html', 'w', encoding="utf8") as file:
         file.write(rendered_page)
