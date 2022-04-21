@@ -4,6 +4,7 @@ from urllib.parse import urljoin
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from livereload import Server
 
 BOOKS_DIR = './dest/'
 
@@ -32,20 +33,25 @@ def process_book_info(books_info='books_info.json'):
     return books
 
 
-books_info = process_book_info()
+def render():
+    books_info = process_book_info()
 
-env = Environment(
-    loader=FileSystemLoader('.'),
-    autoescape=select_autoescape(['html', 'xml'])
-)
+    env = Environment(
+        loader=FileSystemLoader('.'),
+        autoescape=select_autoescape(['html', 'xml'])
+    )
 
-template = env.get_template('template.html')
+    template = env.get_template('template.html')
 
-rendered_page = template.render(books_info=books_info)
+    rendered_page = template.render(books_info=books_info)
+
+    with open('index.html', 'w', encoding="utf8") as file:
+        file.write(rendered_page)
 
 
-with open('index.html', 'w', encoding="utf8") as file:
-    file.write(rendered_page)
-
-server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
-server.serve_forever()
+render()
+server = Server()
+server.watch('template.html', render)
+server.serve(root='.')
+# server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
+# server.serve_forever()
