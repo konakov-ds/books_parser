@@ -27,7 +27,7 @@ def parse_book_page(book_id):
     title, author = [h.strip() for h in head]
     book_selector = 'span.d_book a'
     genre = soup.select(book_selector)
-    genre = ', '.join([genre.text for genre in genre])
+    genre = [genre.text for genre in genre]
 
     comment_selector = '.texts span'
     comments = soup.select(comment_selector)

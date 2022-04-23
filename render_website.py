@@ -29,7 +29,7 @@ def process_book_info(books_info='books_info.json'):
         book['book_path'] = ''
         if guid in books_paths:
             book_path_index = books_paths.index(guid)
-            book['book_path'] = f'{BOOKS_DIR}books/{books[book_path_index]}'
+            book['book_path'] = f'./books/{books[book_path_index]}'
         if guid in books_images_paths:
             img_path_index = books_images_paths.index(guid)
         book['img_src'] = f'./images/_nopic.gif'
@@ -61,4 +61,4 @@ def render(books_per_page=10):
 render()
 server = Server()
 server.watch('template.html', render)
-server.serve(root='./pages/', default_filename='index*.html')
+server.serve(root='./pages/', default_filename='index1.html')
