@@ -5,7 +5,7 @@
 информацию (обложку, жанр, комментарии).
 Используется ресурс [tululu.org](https://tululu.org/).
 Для скачивания книг из определенного диапазона id используйте `parse_tululu_books_by_id`, для скачивания книг из категории фантастика - `parse_tululu_category.py`
-
+Пример реализации на [GitHub Pages](https://konakov-ds.github.io/books_parser/pages/index1.html).
 
 ###  Переменные окружения
 `parse_tululu_books_by_id`
