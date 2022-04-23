@@ -29,12 +29,12 @@ def process_book_info(books_info='books_info.json'):
         book['book_path'] = ''
         if guid in books_paths:
             book_path_index = books_paths.index(guid)
-            book['book_path'] = f'./books/{books[book_path_index]}'
+            book['book_path'] = f'../dest/books/{books[book_path_index]}'
         if guid in books_images_paths:
             img_path_index = books_images_paths.index(guid)
-        book['img_src'] = f'./images/_nopic.gif'
+        book['img_src'] = f'../dest/images/_nopic.gif'
         if img_path_index:
-            book['img_src'] = f'./images/{images[img_path_index]}'
+            book['img_src'] = f'../dest/images/{images[img_path_index]}'
     return books_info
 
 
