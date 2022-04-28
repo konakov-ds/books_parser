@@ -1,4 +1,7 @@
 requests==2.26.*
 bs4==0.0.1
-installed lxml==4.6.*
+lxml==4.6.*
 pathvalidate==2.5.*
+Jinja2==3.1.*
+livereload==2.6.*
+more-itertools==8.12.*
