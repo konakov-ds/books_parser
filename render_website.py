@@ -7,14 +7,14 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
 from more_itertools import chunked
 
-BOOKS_DIR = '../dest/'
+BOOKS_DIR = './dest/'
 
 
 def process_book_info(books_info='books_info.json'):
-    images = os.listdir(urljoin(BOOKS_DIR, 'images/'))
-    books = os.listdir(urljoin(BOOKS_DIR, 'books/'))
+    images = os.listdir(Path(BOOKS_DIR, 'images/'))
+    books = os.listdir(Path(BOOKS_DIR, 'books/'))
 
-    with open(urljoin(BOOKS_DIR, books_info)) as f:
+    with open(Path(BOOKS_DIR, books_info)) as f:
         books_info = json.load(f)
 
     books_images_paths = [
