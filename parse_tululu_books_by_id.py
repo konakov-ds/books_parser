@@ -9,6 +9,15 @@ from parsing_utils import check_for_redirect, parse_book_page
 
 base_url = "https://tululu.org/images/"
 
+def check_book_txt(book_id):
+    url = 'https://tululu.org/txt.php'
+    params = {'id': book_id}
+    response = requests.get(url, params=params, verify=True)
+    response.raise_for_status()
+    if not response.text:
+        return False
+    return True
+
 
 def download_txt(book_id, filename, guid, folder='books/', dest_folder=None):
     if dest_folder:
@@ -21,6 +30,8 @@ def download_txt(book_id, filename, guid, folder='books/', dest_folder=None):
     response = requests.get(url, params=params, verify=True)
     response.raise_for_status()
     check_for_redirect(response)
+    if not response.text:
+        return None
     with open(book_path, 'w') as f:
         f.write(response.text)
 
@@ -48,6 +59,8 @@ def books_downloads(
         os.makedirs(dest_folder, exist_ok=True)
     books_info = []
     for book_id in books_ids:
+        if not check_book_txt(book_id):
+            continue
         try:
             book_info = parse_book_page(book_id)
             books_info.append(book_info)
