@@ -54,27 +54,28 @@ def parse_book_page(book_id):
 
     return book_info
 
-def get_books_info(books_info='books_info.json'):
+def get_books_info(books_info):
     images = os.listdir('./dest/images/')
     books = os.listdir('./dest/books/')
-
-    with open(Path('./dest/', books_info)) as f:
-        books_info = json.load(f)
-
-    images_paths = [
-        image[:image.find('_')] for image in images
-    ]
-    books_paths = [
-        book[book.find('_') + 1: -4] for book in books
-    ]
-    for book in books_info:
-        guid = book['guid']
-        book['book_path'] = ''
-        if guid in books_paths:
-            book_path_index = books_paths.index(guid)
-            book['book_path'] = Path(CONTENT_DIR, 'books/', books[book_path_index])
-            book['img_src'] = Path(CONTENT_DIR, 'images/', 'nopic.gif')
-        if guid in images_paths:
-            img_path_index = images_paths.index(guid)
-            book['img_src'] = Path(CONTENT_DIR, 'images/', images[img_path_index])
-    return books_info
+    try:
+        with open(Path('./dest/', books_info)) as f:
+            books_info = json.load(f)
+            images_paths = [
+                image[:image.find('_')] for image in images
+            ]
+            books_paths = [
+                book[book.find('_') + 1: -4] for book in books
+            ]
+            for book in books_info:
+                guid = book['guid']
+                book['book_path'] = ''
+                if guid in books_paths:
+                    book_path_index = books_paths.index(guid)
+                    book['book_path'] = Path(CONTENT_DIR, 'books/', books[book_path_index])
+                    book['img_src'] = Path(CONTENT_DIR, 'images/', 'nopic.gif')
+                if guid in images_paths:
+                    img_path_index = images_paths.index(guid)
+                    book['img_src'] = Path(CONTENT_DIR, 'images/', images[img_path_index])
+            return books_info
+    except OSError:
+        print('Проблемы при чтении файла с информацией о книгах')
