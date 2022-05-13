@@ -14,21 +14,18 @@ def render(books_per_page=10):
     )
     template = env.get_template('template.html')
 
-    try:
-        books_info = get_books_info(books_info='books_info.json')
-        books_chunks = list(chunked(books_info, books_per_page))
-        num_pages = len(books_chunks)
-        Path('pages').mkdir(parents=True, exist_ok=True)
 
-        for page, books in enumerate(books_chunks, start=1):
-            rows = chunked(books, 2)
-            rendered_page = template.render(rows=rows, page=page, num_pages=num_pages)
+    books_info = get_books_info(books_info='books_info.json')
+    books_chunks = list(chunked(books_info, books_per_page))
+    pages_num = len(books_chunks)
+    Path('pages').mkdir(parents=True, exist_ok=True)
 
-            with open(f'pages/index{page}.html', 'w', encoding="utf8") as file:
-                file.write(rendered_page)
+    for page, books in enumerate(books_chunks, start=1):
+        rows = chunked(books, 2)
+        rendered_page = template.render(rows=rows, page=page, num_pages=pages_num)
 
-    except TypeError:
-        print('Что-то пошло не так')
+        with open(f'pages/index{page}.html', 'w', encoding="utf8") as file:
+            file.write(rendered_page)
 
 
 render()
