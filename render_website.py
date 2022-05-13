@@ -14,9 +14,8 @@ def render(books_per_page=10):
     )
     template = env.get_template('template.html')
 
-
-    books_info = get_books_info(books_info='books_info.json')
-    books_chunks = list(chunked(books_info, books_per_page))
+    book_storage = get_books_info(books_info='books_info.json')
+    books_chunks = list(chunked(book_storage, books_per_page))
     pages_num = len(books_chunks)
     Path('pages').mkdir(parents=True, exist_ok=True)
 
