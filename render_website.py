@@ -16,11 +16,11 @@ def render(books_per_page=10):
 
     try:
         books_info = get_books_info(books_info='books_info.json')
-        books_pages = list(chunked(books_info, books_per_page))
-        num_pages = len(books_pages)
+        books_chunks = list(chunked(books_info, books_per_page))
+        num_pages = len(books_chunks)
         Path('pages').mkdir(parents=True, exist_ok=True)
 
-        for page, books in enumerate(books_pages, start=1):
+        for page, books in enumerate(books_chunks, start=1):
             rows = chunked(books, 2)
             rendered_page = template.render(rows=rows, page=page, num_pages=num_pages)
 
